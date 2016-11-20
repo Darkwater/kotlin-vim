@@ -12,6 +12,10 @@ setlocal indentexpr=GetKotlinIndent()
 setlocal indentkeys=0},0),!^F,o,O,e,<CR>
 setlocal autoindent " TODO ?
 
+setlocal comments=s1:/*,mb:*,ex:*/,://
+setlocal formatoptions+=ro
+setlocal formatoptions-=t
+
 " TODO teach it to count bracket balance, etc.
 function! GetKotlinIndent()
     if v:lnum == 0
@@ -46,5 +50,15 @@ function! GetKotlinIndent()
         return prev_indent - &shiftwidth
     endif
 
-    return prev_indent
+    let indent = prev_indent
+
+    if prev =~ '/\*'
+        let indent += 1
+    endif
+
+    if prev =~ '\*/'
+        let indent -= 1
+    endif
+
+    return indent
 endfunction
